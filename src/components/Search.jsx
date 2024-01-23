@@ -6,21 +6,30 @@ import Card from "./Card";
 function Search({}) {
   const [data, setData] = useState(null);
   const [searchField, setSearchField] = useState("");
-  const [currentPage, setCurrentPage] = useState("1");
+  const [isSearching, setIsSearching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Data
   useEffect(() => {
-    axios
-      .get(`https://technical.test.talenavi.com/api/movie?page=${currentPage}`)
-      .then((response) => {
-        const fetchedData = response.data.data.data;
-        setData(fetchedData);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [currentPage]);
+    const fetchData = async () => {
+      let allGenre = [];
+      let nextPageUrl = "https://technical.test.talenavi.com/api/movie";
+      while (nextPageUrl) {
+        try {
+          const response = await axios.get(nextPageUrl);
+          const fetchedGenre = response.data.data.data;
+          allGenre = allGenre.concat(fetchedGenre);
+          nextPageUrl = response.data.data.next_page_url;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          break;
+        }
+      }
+      setData(allGenre);
+    };
+    fetchData();
+  }, []);
 
+  let recordsPerPage = 10;
   // Search
   let filteredMovies = null;
   if (data != null) {
@@ -34,6 +43,7 @@ function Search({}) {
 
   const handleChange = (e) => {
     setSearchField(e.target.value);
+    setIsSearching(e.target.value !== "");
   };
 
   if (!filteredMovies) {
@@ -41,11 +51,20 @@ function Search({}) {
   }
 
   // Page
+  const lastIndex = currentPage * recordsPerPage;
+  const firstIndex = lastIndex - recordsPerPage;
+  const records = isSearching
+    ? filteredMovies
+    : filteredMovies.slice(firstIndex, lastIndex);
+  const npage = isSearching
+    ? 1
+    : Math.ceil(filteredMovies.length / recordsPerPage);
+
   const prePage = () => {
-    setCurrentPage((prevPage) => String(Number(prevPage) - 1));
+    setCurrentPage((prePage) => prePage - 1);
   };
   const nextPage = () => {
-    setCurrentPage((nextPage) => String(Number(nextPage) + 1));
+    setCurrentPage((nextPage) => nextPage + 1);
   };
 
   return (
@@ -55,7 +74,7 @@ function Search({}) {
           {currentPage}
         </div>
         <input
-          className="w-96 text-headline outline-none border-none rounded-md placeholder-headline px-4 py-2 text-base bg-card-background"
+          className="w-96 text-headline outline-none border-none rounded-md placeholder-paragraph px-4 py-2 text-base bg-card-background"
           type="search"
           placeholder="Search"
           onChange={handleChange}
@@ -69,22 +88,54 @@ function Search({}) {
       </div>
       <div className="w-4/5 flex flex-wrap flex-col items-center gap-4">
         <div className="w-full flex flex-wrap justify-center gap-6">
-          {filteredMovies.map((movie) => (
+          {records.map((movie) => (
             <Card key={movie.id} movie={movie} />
           ))}
         </div>
         <nav className="flex gap-3">
           <button
-            className="w-auto px-3 py-1 rounded-md outline-none border-none bg-primary text-headline text-sm font-medium cursor-pointer"
+            className={`w-auto px-3 py-1 rounded-md outline-none border-none text-headline text-sm font-medium cursor-pointer ${
+              currentPage === 1 && !isSearching
+                ? "bg-primary-light"
+                : "bg-primary"
+            }`}
+            style={{
+              transition: "all 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              e.currentTarget.classList.add("bg-primary-dark")
+            }
+            onMouseLeave={(e) =>
+              e.currentTarget.classList.remove("bg-primary-dark")
+            }
             onClick={prePage}
-            disabled={currentPage === "1"}
+            disabled={currentPage === 1 || isSearching}
           >
             Prev
           </button>
           <button
-            className="w-auto px-3 py-1 rounded-md outline-none border-none bg-primary text-headline text-sm font-medium cursor-pointer"
+            className={`w-auto px-3 py-1 rounded-md outline-none border-none text-headline text-sm font-medium cursor-pointer ${
+              (currentPage === npage ||
+                filteredMovies.length < recordsPerPage) &&
+              !isSearching
+                ? "bg-primary-light"
+                : "bg-primary"
+            }`}
+            style={{
+              transition: "all 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              e.currentTarget.classList.add("bg-primary-dark")
+            }
+            onMouseLeave={(e) =>
+              e.currentTarget.classList.remove("bg-primary-dark")
+            }
             onClick={nextPage}
-            disabled={filteredMovies && filteredMovies.length < 10}
+            disabled={
+              currentPage === npage ||
+              filteredMovies.length < recordsPerPage ||
+              isSearching
+            }
           >
             Next
           </button>

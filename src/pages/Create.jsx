@@ -146,7 +146,7 @@ const Detail = () => {
                   onClick={() => handleClick(item.name, item.id)}
                   className="border-solid border-2 border-tertiary rounded-tr-full rounded-br-full rounded-bl-full px-4 py-1 cursor-pointer"
                   style={{
-                    transition: "background-color 0.3s",
+                    transition: "all 0.3s",
                     backgroundColor: selectedItemIds.includes(item.id)
                       ? "#2cb67d"
                       : "",
@@ -168,7 +168,7 @@ const Detail = () => {
             to="/"
             className="w-auto px-3 py-2 flex items-center rounded-lg outline-none border-none bg-primary text-headline text-base font-sm cursor-pointer no-underline"
             style={{
-              transition: "background-color 0.3s",
+              transition: "all 0.3s",
             }}
             onMouseEnter={(e) =>
               e.currentTarget.classList.add("bg-primary-dark")
@@ -183,7 +183,7 @@ const Detail = () => {
             className="w-full py-2 rounded-lg outline-none border-none bg-primary text-headline text-xl font-medium cursor-pointer"
             type="submit"
             style={{
-              transition: "background-color 0.3s",
+              transition: "all 0.3s",
             }}
             onMouseEnter={(e) =>
               e.currentTarget.classList.add("bg-primary-dark")

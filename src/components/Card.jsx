@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function card({ movie }) {
+function Card({ movie }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
   return (
     <Link
       to={`/detail/${movie.id}`}
-      className="w-64 h-128 flex flex-col justify-end rounded-md bg-card-background"
-      style={{ textDecoration: "none", color: "inherit" }}
+      className={`w-64 h-128 flex flex-col justify-end rounded-md bg-card-background`}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+        transition: "transform 0.3s",
+        transform: isHovered ? "scale(1.025)" : "scale(1)",
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="w-full h-full rounded-md">
         <img className="mask-bottom" src={movie.image} />
@@ -31,4 +47,4 @@ function card({ movie }) {
   );
 }
 
-export default card;
+export default Card;
