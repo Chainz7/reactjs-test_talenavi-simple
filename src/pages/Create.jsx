@@ -138,13 +138,13 @@ const Detail = () => {
           <legend className="text-base px-1 font-medium" htmlFor="title">
             Genre
           </legend>
-          <div className="flex flex-wrap justify-between gap-3">
+          <div className="flex flex-wrap justify-around gap-3">
             {genre &&
               genre.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleClick(item.name, item.id)}
-                  className="border-solid border-2 border-tertiary rounded-tr-full rounded-br-full rounded-bl-full px-4 py-1 cursor-pointer"
+                  className="w-26 flex justify-center border-solid border-2 border-tertiary rounded-tr-full rounded-br-full rounded-bl-full py-1 cursor-pointer"
                   style={{
                     transition: "all 0.3s",
                     backgroundColor: selectedItemIds.includes(item.id)
