@@ -30,7 +30,12 @@ const Detail = () => {
           break;
         }
       }
-      setGenre(allGenre);
+      const uniqueGenre = allGenre.filter(
+        (value, index, self) =>
+          index === self.findIndex((t) => t.name === value.name)
+      );
+
+      setGenre(uniqueGenre);
     };
 
     fetchData();

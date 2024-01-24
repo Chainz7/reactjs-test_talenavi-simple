@@ -50,8 +50,6 @@ const Detail = () => {
     const fetchData = async () => {
       let allGenre = [];
       let nextPageUrl = "https://technical.test.talenavi.com/api/genre";
-
-      // Loop through all pages until nextPageUrl is null
       while (nextPageUrl) {
         try {
           const response = await axios.get(nextPageUrl);
@@ -60,11 +58,15 @@ const Detail = () => {
           nextPageUrl = response.data.data.next_page_url;
         } catch (error) {
           console.error("Error fetching data:", error);
-          break; // Exit the loop on error
+          break;
         }
       }
+      const uniqueGenre = allGenre.filter(
+        (value, index, self) =>
+          index === self.findIndex((t) => t.name === value.name)
+      );
 
-      setGenre(allGenre);
+      setGenre(uniqueGenre);
     };
 
     fetchData();
