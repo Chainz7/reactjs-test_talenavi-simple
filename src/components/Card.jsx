@@ -25,7 +25,7 @@ function Card({ movie }) {
       onMouseLeave={handleMouseLeave}
     >
       <div className="w-full h-full rounded-md">
-        <img className="mask-bottom" src={movie.image} />
+        <img className="mask-bottom" src={movie.image} alt="image" />
       </div>
       <span className="w-64 absolute mb-36 px-6 font-bold text-lg">
         {movie.title}
